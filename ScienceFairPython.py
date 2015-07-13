@@ -3,10 +3,10 @@ import smtplib
 import time
 import string
 
-fromaddr = 'CenterAED001KKABA@gmail.com'
-toaddrs = 'jameswang1279@gmail.com'
-username = 'CenterAED001KKABA@gmail.com'
-password = 'administrator%^&'
+fromaddr = ''
+toaddrs = ''
+username = ' '
+password = ''
 server = smtplib.SMTP('smtp.gmail.com:587')
 
 condition = "null"
