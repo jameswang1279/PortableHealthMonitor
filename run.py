@@ -9,7 +9,6 @@ username = ' '
 password = ''
 server = smtplib.SMTP('smtp.gmail.com:587')
 
-condition = "null"
 
 def tempMsg(a, condition, time):
     msg = ("As of %s your body temperature was %s Celsius, which is %s" %('null' a, condition))

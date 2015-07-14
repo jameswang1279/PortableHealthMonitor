@@ -1,13 +1,17 @@
-username = 'CenterAED001KKABA@gmail.com';
-password = 'administrator%^&';
+username = '';
+password = '';
 server = 'smtp.gmail.com:587';
 
+import time
 from time import sleep;
 import smtplib;
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText;
 from email.mime.multipart import MIMEMultipart;
+import serial
 
+ser = serial.Serial('COM4')
+b = float(a)
 
 def create_msg(to_address,
                from_address='',
@@ -22,10 +26,6 @@ def create_msg(to_address,
     msg['From'] = from_address;
     return msg;
 
-# send an email
-# takes an smtp address, user name, password and MIME* object
-# if mode = 0 sends to and cc
-# if mode = 1 sends to bcc
 def send_email(smtp_address, usr, password, msg, mode):
     server = smtplib.SMTP(smtp_address);
     server.ehlo();
@@ -51,6 +51,7 @@ def send_email(smtp_address, usr, password, msg, mode):
 #                                        0 - plain
 #                                        1 - html
 # files is list of strings
+
 def compose_email(addresses, subject, body, files):
 
     # addresses
@@ -83,11 +84,13 @@ def compose_email(addresses, subject, body, files):
 
 # attach text
 # attaches a plain text or html text to a message
+
 def attach_text(msg, atext, mode):
     part = MIMEText(atext, get_mode(mode));
     msg.attach(part);
 
 # util function to get mode type
+
 def get_mode(mode):
     if (mode == 0):
         mode = 'plain';
@@ -99,15 +102,43 @@ def get_mode(mode):
 
 # attach file
 # takes the message and a file name and attaches the file to the message
+
 def attach_file(msg, afile):
     part = MIMEApplication(open(afile, "rb").read());
     part.add_header('Content-Disposition', 'attachment', filename=afile);
     msg.attach(part);
 
-#to be tested...
-compose_email(['jameswang1279@gmail.com','',''],
+
+#///////////////////////////////////////////////////////
+def tempMsg(a, condition, time):
+    msg = ("As of %s your body temperature was %s Celsius, which is %s" %('null',b, condition))
+    str(msg)
+    return msg
+    global msg
+
+if(b > 35 and b < 39):
+    print b
+    condition = "normal"
+    print condition
+    tempMsg(b,condition,time)
+  
+elif(b > 39 and b < 40):
+    print b
+    condition = "low fever"
+    print condition
+    tempMsg(b,condition,time)
+  
+elif(b > 40):
+    print b
+    condition = "high fever"
+    print condition
+    tempMsg(b,condition,time)
+
+
+
+compose_email(['EMAIL HERE','',''],
               'Healthcare Monitoring System Data Report',
-              [['some text goes here...\n',0]],
+              [[msg,0]],
               '');
               
 #compose_email can take the following arguments: 
