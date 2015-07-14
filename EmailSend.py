@@ -1,8 +1,9 @@
-username = '';
-password = '';
-server = 'smtp.gmail.com:587';
+username = ' ';
+password = ' ';
+server = ' ';
 
 import time
+import datetime
 from time import sleep;
 import smtplib;
 from email.mime.application import MIMEApplication
@@ -10,6 +11,7 @@ from email.mime.text import MIMEText;
 from email.mime.multipart import MIMEMultipart;
 import serial
 
+ctime = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
 ser = serial.Serial('COM4')
 a = ser.readline()
 b = float(a)
@@ -112,7 +114,7 @@ def attach_file(msg, afile):
 
 #///////////////////////////////////////////////////////
 def tempMsg(a, condition, time):
-    msg = ("As of %s your body temperature was %s Celsius, which is %s" %('null',b, condition))
+    msg = ("As of %s your body temperature was %s Celsius, which is %s" %(ctime,b, condition))
     str(msg)
     return msg
     global msg
@@ -137,7 +139,7 @@ elif(b > 40):
 
 
 
-compose_email(['EMAIL HERE','',''],
+compose_email(['EMAIL','',''],
               'Healthcare Monitoring System Data Report',
               [[msg,0]],
               '');
