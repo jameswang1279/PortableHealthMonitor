@@ -11,6 +11,7 @@ from email.mime.multipart import MIMEMultipart;
 import serial
 
 ser = serial.Serial('COM4')
+a = ser.readline()
 b = float(a)
 
 def create_msg(to_address,
