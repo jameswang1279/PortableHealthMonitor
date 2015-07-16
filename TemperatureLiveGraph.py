@@ -1,3 +1,5 @@
+#Need to install pillow
+
 import matplotlib.pyplot as plt
 import numpy as np
 import serial
@@ -27,3 +29,6 @@ while True:
             plt.pause(0.0001)
             if(cent > 50):
                     temp.pop(0)
+            if((numpy.max(temperature[:,0])) > 42):
+                plt.savefig('image.jpg')
+            
