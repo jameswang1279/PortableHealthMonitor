@@ -1,12 +1,13 @@
 #Need to install pillow
-
+	
 import matplotlib.pyplot as plt
 import numpy as np
 import serial
-from drawnow import *
+from pylab import *
+#from drawnow import *
 
 temperature = []
-arduinoData = serial.Serial('COM4', 115200)
+arduinoData = serial.Serial('/dev/ttyUSB0', 9600)
 plt.ion
 cnt = 0
 
@@ -16,19 +17,31 @@ def makeFig():
     plt.title("Body Temperature Log")
     plt.grid(True)
     plt.ylabel("Temperature (Celsius) ")
-    plt.plot(temperature, 'ro-',leabel = 'Degrees Celsius')
-    plit.legend(loc = 'upper left')
-
+    plt.plot(temperature, 'ro-',label = 'Degrees Celsius')
+    plt.legend(loc = 'upper left')
+    savefig("signal.png",dpi=100)
+    plt.show()
+    plt.draw()
 while True:
             while(arduinoData.inWaiting() ==0):
                 pass
-            arduinoString = arduinoData.readline()
-            temp = float(dataArray[0])
+            temp = arduinoData.readline()
+            #temp = float(dataArray[0])
+	    #temp = arduinoString
             temperature.append(temp)
-            drawnoe(makeFig)
+            #drawnow(makeFig)
             plt.pause(0.0001)
-            if(cent > 50):
-                    temp.pop(0)
-            if((numpy.max(temperature[:,0])) > 42):
-                plt.savefig('image.jpg')
+            cnt += 1
+            print (cnt)
+            if(cnt > 33):
+                    temperature.pop()
+                    print ("FULL!!!!")
+                    print ("Saving images...")
+                    #plt.savefig('image.jpg')
+                    makeFig()
+                   # save("signal", ext="svg", close=True, verbose=True)
+                   # savefig('foo.png', bbox_inches='tight')
+                    break	
+           # if((np.max(temperature)) > 42):
+            #    plt.savefig('image.jpg')
             
