@@ -12,8 +12,8 @@ plt.ion
 cnt = 0
 
 def makeFig():
-    plt.xlim(0,100)
-    plt.ylim(35,45)
+    plt.xlim(0,750)
+    plt.ylim(35,40)
     plt.title("Body Temperature Log")
     plt.grid(True)
     plt.ylabel("Temperature (Celsius) ")
@@ -23,8 +23,8 @@ def makeFig():
     plt.show()
     plt.draw()
 while True:
-            while(arduinoData.inWaiting() ==0):
-                pass
+            #while(arduinoData.inWaiting() ==0):
+                #pass
             temp = arduinoData.readline()
             #temp = float(dataArray[0])
 	    #temp = arduinoString
@@ -33,7 +33,7 @@ while True:
             plt.pause(0.0001)
             cnt += 1
             print (cnt)
-            if(cnt > 33):
+            if(cnt > 750):
                     temperature.pop()
                     print ("FULL!!!!")
                     print ("Saving images...")

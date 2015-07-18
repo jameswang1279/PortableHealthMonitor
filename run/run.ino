@@ -7,7 +7,7 @@ int initi[10];
 int counter = 0;
 
 float average = 0;
-int tempArray[30];
+float tempArray[30];
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 void(* resetFunc) (void) = 0; //used for reset 
