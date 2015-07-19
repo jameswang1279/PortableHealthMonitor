@@ -1,6 +1,6 @@
-username = ' ';
-password = ' ';
-server = ' ';
+username = 'CenterAED001KKABA@gmail.com';
+password = 'administrator%^&';
+server = 'smtp.gmail.com:587';
 
 import time
 import datetime
@@ -11,8 +11,9 @@ from email.mime.text import MIMEText;
 from email.mime.multipart import MIMEMultipart;
 import serial
 
+
 ctime = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
-ser = serial.Serial('COM4')
+ser = serial.Serial('/dev/ttyUSB0', 9600)
 a = ser.readline()
 b = float(a)
 
@@ -113,11 +114,13 @@ def attach_file(msg, afile):
 
 
 #///////////////////////////////////////////////////////
+
 def tempMsg(a, condition, time):
     msg = ("As of %s your body temperature was %s Celsius, which is %s" %(ctime,b, condition))
     str(msg)
-    return msg
     global msg
+    return msg
+    
 
 if(b > 35 and b < 39):
     print b
@@ -138,11 +141,10 @@ elif(b > 40):
     tempMsg(b,condition,time)
 
 
-
-compose_email(['EMAIL','',''],
+compose_email(['jameswang1279@gmail.com','',''],
               'Healthcare Monitoring System Data Report',
               [[msg,0]],
-              '');
+              'signal.png');
               
 #compose_email can take the following arguments: 
 #	1. to recipients (separated by a comma)
