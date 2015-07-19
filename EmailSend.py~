@@ -1,5 +1,5 @@
-username = 'CenterAED001KKABA@gmail.com';
-password = 'administrator%^&';
+username = ' ';
+password = ' ';
 server = 'smtp.gmail.com:587';
 
 import time
@@ -44,17 +44,6 @@ def send_email(smtp_address, usr, password, msg, mode):
         print 'error in send mail bcc'; print 'email cancled'; exit();
     server.quit();
 
-# compose email
-# takes all the details for an email and sends it
-# address format: list, [0] - to
-#                       [1] - cc
-#                       [2] - bcc
-# subject format: string
-# body format: list of pairs [0] - text
-#                            [1] - type:
-#                                        0 - plain
-#                                        1 - html
-# files is list of strings
 
 def compose_email(addresses, subject, body, files):
 
@@ -141,7 +130,7 @@ elif(b > 40):
     tempMsg(b,condition,time)
 
 
-compose_email(['jameswang1279@gmail.com','',''],
+compose_email([' ','',''],
               'Healthcare Monitoring System Data Report',
               [[msg,0]],
               'signal.png');
