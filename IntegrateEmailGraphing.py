@@ -11,8 +11,8 @@ from email.mime.text import MIMEText;
 from email.mime.multipart import MIMEMultipart;
 
 
-username = '';
-password = '';
+username = 'CenterAED001KKABA@gmail.com';
+password = 'administrator%^&';
 server = 'smtp.gmail.com:587';
 
 ctime = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S')
@@ -151,7 +151,7 @@ while True:
                         tempMsg(avc,condition,time)
                     
                
-                    compose_email([' ','',''],'Healthcare Monitoring System Data Report',[[msg,0]],'signal.png');
+                    compose_email(['jameswang1279@gmail.com','',''],'Healthcare Monitoring System Data Report',[[msg,0]],'signal.png');
                      
                     break
       
