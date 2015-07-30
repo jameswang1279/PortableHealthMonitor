@@ -1,8 +1,12 @@
-int pulsePin = 0;                 // Pulse Sensor purple wire connected to analog pin 0
+#include <Wire.h>
+#include <Adafruit_MLX90614.h>
+
+int pulsePin = 14;                 // Pulse Sensor purple wire connected to analog pin 0
 int blinkPin = 7;               // pin to blink led at each beat
 
-int fadePin = 5;                  // pin to do fancy classy fading blink at each beat
-int fadeRate = 0;                 // used to fade LED on with PWM on fadePin
+int fadePin = 5;                  // sudo code
+int fadeRate = 0;                 // sudo code
+int b = 0;
 
 
 // these variables are volatile because they are used during the interrupt service routine!
@@ -11,7 +15,16 @@ volatile int Signal;                // holds the incoming raw data
 volatile int IBI = 600;             // holds the time between beats, the Inter-Beat Interval
 volatile boolean Pulse = false;     // true when pulse wave is high, false when it's low
 volatile boolean QS = false;        // becomes true when Arduoino finds a beat.
+int lightPin = 1;  //define a pin for Photo resistor
+int a = 0; //a references the light value detected by the photoresistor
+int initi[10];
+int counter = 0;
 
+float average = 0;
+float tempArray[30];
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+
+void(* resetFunc) (void) = 0; //used for reset 
 
 void setup(){
 
@@ -19,26 +32,65 @@ void setup(){
   pinMode(fadePin,OUTPUT);          // pin that will fade to your heartbeat!
   Serial.begin(115200);             // we agree to talk fast!
   interruptSetup();                 // sets up to read Pulse Sensor signal every 2mS
-   // UN-COMMENT THE NEXT LINE IF YOU ARE POWERING The Pulse Sensor AT LOW VOLTAGE,
-   // AND APPLY THAT VOLTAGE TO THE A-REF PIN
-   //analogReference(EXTERNAL);  
+  mlx.begin();  
 }
 
 
 
 void loop(){
-  Serial.println(Signal);     // send Processing the raw Pulse Sensor data
+  
+   a = analogRead(lightPin);   //determine initialization phase
+  for(int i=0; i <= 10; i++){
+    initi[i] = a ;
+    delay(50);
+    a = analogRead(lightPin);
+  }
+  
+    if(initi[1] - initi[10] > 80){ //determine initialization
+
+    //Serial.println("Device Initialized..."); UNCOMMENT FOR FINAL
+    //Serial.println(" "); UNCOMMENT FOR FINAL
+    //Serial.println("Measuring Temperature"); UNCOMMENT FOR FINAL
+
+    for(int i=0; i <= 30; i++){
+      tempArray[i] = mlx.readObjectTempC(); 
+      delay(30);
+    }
+
+
+    delay(100);
+    for(int i=0; i < 30; i++)
+    {
+      average = (average + tempArray[i]);
+    }
+    average = average/30; //Do exponential regression and error analysis
+  }
+  else
+  {
+    //LEAVE EMPTY
+  }
+
+
+    
   if (QS == true){                       // Quantified Self flag is true when arduino finds a heartbeat
         fadeRate = 255;                  // Set 'fadeRate' Variable to 255 to fade LED with pulse
-        sendDataToProcessing('B',BPM);   // send heart rate with a 'B' prefix
-        sendDataToProcessing('Q',IBI);   // send time between beats with a 'Q' prefix
-        QS = false;                      // reset the Quantified Self flag for next time   
+b = BPM;
      }
  
   ledFadeToBeat();
  
   delay(20);                             //  take a break
+  
+  Serial.print(average);
+  Serial.print(',');
+  Serial.println(b);
 }
+
+
+
+
+
+
 
 
 void ledFadeToBeat(){
