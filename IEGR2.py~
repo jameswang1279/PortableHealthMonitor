@@ -5,6 +5,7 @@ import serial
 from pylab import *
 import time
 import datetime
+from time import sleep
 import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
@@ -132,14 +133,14 @@ def attach_file(msg, afile):
     part.add_header('Content-Disposition', 'attachment', filename=afile)
     msg.attach(part)
 
-'''
+
 def tempMsg(a, condition, time):
     msg = 'As of %s your body temperature was %s Celsius, which is %s'\
         % (ctime, averageT, condition)
     str(msg)
     global msg
     return msg
-'''
+
 
 while True:
 	counter += 1
