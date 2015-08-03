@@ -27,6 +27,7 @@ tempArray = []
 counter = 0
 averageT = 0
 averageP = 0
+index = []
 
 conditionPA = 0
 conditionTA = 1
@@ -34,13 +35,15 @@ conditionTA = 1
 ctime = datetime.datetime.strftime(datetime.datetime.now(),
                                    '%Y-%m-%d %H:%M:%S')
 
+ser = serial.Serial('/dev/ttyACM0', 115200)
+
 '''End Analysis Information'''
 
 #<!-------------------------------------------->
 '''Plot Information'''
 
 def makeFig():
-    plt.xlim(0, 300)
+    plt.xlim(0, len(dataTemp))
     plt.ylim(35, 40)
     plt.title('Body Temperature Log')
     plt.grid(True)
@@ -160,31 +163,43 @@ def attach_file(msg, afile):
 #<!----------------------------------------------------> Generate Message for Email
 
 def tempMsg(ctime, averageP, conditionP, msgP, averageT, conditionT, msgT ): #NEED TO CHANGE VAR NAME
-    msg = 'As of %s your average pulse rate was %d, which is %s. Messages regarding your pulse: %s. Your body temperature was %s Celsius, which is %s. Message regarding your body temperature: %s. '\
+    msg = 'As of %s your average pulse rate was %d, which is %s. Remarks regarding your pulse: %s. Your body temperature was %s Celsius, which is %s. Remarks regarding your body temperature: %s. '\
         % (ctime, averageP, conditionP, msgP, averageT, conditionT, msgT )
     str(msg)
     global msg
     return msg
 
 
-while counter < 2: #debug counter
-	arduinoData = '42,64'
+while counter <= 20: #debug counter
+	arduinoData = ser.readline()
+	print 'Data', arduinoData
+	#arduinoData = '42,64' #Single data Simulation0
+	#if counter == 0: #Continuous data Simulation
+	#	arduinoData = '42,63'
+	#elif counter == 1:
+	#	arduinoData = '38,61'
+	#elif counter == 2:
+	#	arduinoData = '12,58'
 	arduinoData = arduinoData.split(',')
 	dataTemp.append(arduinoData[0])
 	dataHeart.append(arduinoData[1])
 	arduinoData = []
 	counter += 1
-	
+
+makeFig()
+
 for i in range(0,len(dataHeart)):
 	dataHeart[i] = float(dataHeart[i])
-
 for i in range(0,len(dataTemp)):
 	dataTemp[i] = float(dataTemp[i])
-for i in range(0,0):
+for i in range(0,0): #STAYS AT 0,0 FOR SIMULATION PURPOSE
 	dataTemp.pop[i]
-for i in range(1,len(dataTemp)): #NEED TO VALIDATE IF ITERATION WILL GO OUT OF RANGE
+for i in range(1,len(dataTemp)): 
 	if(dataTemp[i] < ((0.0891*(math.log(i))+36.621)+1.5) or dataTemp[i] < ((0.0891*(math.log(i))+36.621)-1.5)):
-		dataTemp.pop()
+		index.append(i)
+
+dataTemp = np.delete(dataTemp, index)
+print dataTemp
 
 averageT = np.mean(dataTemp)
 averageP = np.mean(dataHeart)
@@ -217,9 +232,9 @@ print 'Average Temperature:',averageT
 print 'Average Pulse:',averageP
 print 'Temperature Condition:',conditionT 
 print 'Pulse Condition:',conditionP
-print 'Temperature Message: ',dataBank[conditionTR][conditionTA]
-print 'Pulse Message: ',dataBank[conditionPR][conditionPA]
-makeFig()
+print 'Temperature Remarks: ',dataBank[conditionTR][conditionTA]
+print 'Pulse Remarks: ',dataBank[conditionPR][conditionPA]
+
 
 msgT = dataBank[conditionTR][conditionTA]
 msgP = dataBank[conditionPR][conditionPA]
