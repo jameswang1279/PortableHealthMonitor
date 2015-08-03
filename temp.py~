@@ -1,39 +1,13 @@
 import math
-import matplotlib.pyplot as plt
-import numpy as np
-import serial
-from pylab import *
-import time
-import datetime
-import smtplib
-from email.mime.application import MIMEApplication
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+
+counter = 0
+sum = 2
 
 username = 'CenterAED001KKABA@gmail.com'
 password = 'administrator%^&'
 server = 'smtp.gmail.com:587'
 
-ctime = datetime.datetime.strftime(datetime.datetime.now(),
-                                   '%Y-%m-%d %H:%M:%S')
-
-arduinoData = serial.Serial('/dev/ttyUSB0', 9600)
-counter = 0
-temperature = []
-plt.ion
-
-
-def makeFig():
-    plt.xlim(0, 300)
-    plt.ylim(35, 40)
-    plt.title('Body Temperature Log')
-    plt.grid(True)
-    plt.ylabel('Temperature (Celsius) ')
-    plt.plot(temperature, 'ro-', label='Degrees Celsius')
-    plt.legend(loc='upper left')
-    savefig('signal.png', dpi=100)
-    plt.show()
-    plt.draw()
+sum = math.factorial(10000)
 
 
 def create_msg(
@@ -132,57 +106,6 @@ def attach_file(msg, afile):
     part.add_header('Content-Disposition', 'attachment', filename=afile)
     msg.attach(part)
 
-
-def tempMsg(a, condition, time):
-    msg = 'As of %s your body temperature was %s Celsius, which is %s'\
-        % (ctime, averageT, condition)
-    str(msg)
-    global msg
-    return msg
-
-while True:
-	counter += 1
-	currentlog = 0.0891*(math.log(counter))+36.621
-	
-	data = float(arduinoData.readline().rstrip('\r\n'))
-	if counter > 300:
-		if((data < (currentlog + 1.5)) and (data > (currentlog - 1.5))):
-			print 'Data Valid'
-			print currentlog
-			print data
-			print ' '
-			temperature.append(data)
-			if(len(temperature) > 300):
-				averageT = np.mean(temperature)
-				print averageT
-				if averageT < 38 and averageT > 36:
-					condition = 'normal'
-					print condition
-					makeFig()
-					#break
-				elif averageT > 38 and averageT < 39:
-					condition = 'low fever'
-					print condition
-					makeFig()
-					#break
-				elif averageT > 39:
-					condition = 'high fever'
-					print condition
-					makeFig()
-					#break
-				tempMsg(averageT, condition, time)
-				compose_email(['jameswang1279@gmail.com', '', ''], 'Healthcare Monitoring System Data Report',[[msg, 0]], 'signal.png')
-		
-				break
-		else:
-			print 'Data Invalid'
-			print currentlog
-			print data
-			print ' '
-	       
-	
-
-
-
-
+ 
+compose_email(['jameswang1279@gmail.com', '', ''], 'Testing Data',[[sum, 0]], '')
 

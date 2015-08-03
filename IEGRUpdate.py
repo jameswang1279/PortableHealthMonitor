@@ -179,6 +179,11 @@ for i in range(0,len(dataHeart)):
 	dataHeart[i] = float(dataHeart[i])
 for i in range(0,len(dataTemp)):
 	dataTemp[i] = float(dataTemp[i])
+for i in range(0,0): #STAYS AT 0,0 FOR SIMULATION PURPOSE
+	dataTemp.pop[i]
+for i in range(1,len(dataTemp)): #NEED TO VALIDATE IF ITERATION WILL GO OUT OF RANGE
+	if(dataTemp[i] < ((0.0891*(math.log(i))+36.621)+1.5) or dataTemp[i] < ((0.0891*(math.log(i))+36.621)-1.5)):
+		dataTemp.pop()
 
 averageT = np.mean(dataTemp)
 averageP = np.mean(dataHeart)

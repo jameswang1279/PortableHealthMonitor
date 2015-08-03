@@ -5,7 +5,6 @@ import serial
 from pylab import *
 import time
 import datetime
-from time import sleep
 import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
@@ -140,7 +139,6 @@ def tempMsg(a, condition, time):
     str(msg)
     global msg
     return msg
-
 
 while True:
 	counter += 1
