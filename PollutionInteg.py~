@@ -14,23 +14,31 @@ from email.mime.multipart import MIMEMultipart
 '''Analysis Information'''
 
 #formatted as of pulse,temperature
-A = ['pulse parameter normal', 'temperature parameter normal'] #normal
-B = ['Normal if exercising, otherwise diet should be maintained','Low fever detected'] #mild high
-C = ['Get rest','High fever detected'] #very high
-D = ['Pulse is low, exercise more','null'] #low
+A = ['pulse parameter normal', 'temperature parameter normal', 'air quality is normal and safe'] #normal
+B = ['Normal if exercising, otherwise diet should be maintained','Low fever detected','pollutants detected','avoid prolonged exposure'] #mild high
+C = ['Get rest','High fever detected', 'high amounts of pollutants detected, get out of area immediately'] #very high
+D = ['Pulse is low, exercise more','null data, remeasure', 'air quality is normal and safe'] #low
+
 
 dataBank = [A,B,C,D]
 
 dataHeart = []
 dataTemp = []
-tempArray = []
+dataPoll = []
 counter = 0
 averageT = 0
 averageP = 0
+averagePO = 0
 index = []
 
 conditionPA = 0
 conditionTA = 1
+conditionPO = 2
+
+sThreshPO = 1000 #SUDO
+mThreshPO = 1500 #SUDO
+dThreshPO = 2000 #SUDO
+ddThreshPO = 2200 #SUDO
 
 ctime = datetime.datetime.strftime(datetime.datetime.now(),
                                    '%Y-%m-%d %H:%M:%S')
@@ -163,8 +171,8 @@ def attach_file(msg, afile):
 #<!----------------------------------------------------> Generate Message for Email
 
 def tempMsg(ctime, averageP, conditionP, msgP, averageT, conditionT, msgT ): #NEED TO CHANGE VAR NAME
-    msg = 'As of %s your average pulse rate was %d, which is %s. Remarks regarding your pulse: %s. Your body temperature was %s Celsius, which is %s. Remarks regarding your body temperature: %s. '\
-        % (ctime, averageP, conditionP, msgP, averageT, conditionT, msgT )
+    msg = 'As of %s your average pulse rate was %d, which is %s. Remarks regarding your pulse: %s. Your body temperature was %s Celsius, which is %s. Remarks regarding your body temperature: %s. Pollution in the vicinity is at %d, which is %s.'\
+        % (ctime, averageP, conditionP, msgP, averageT, conditionT, msgT, averagePO, conditionPO, conditionPO )
     str(msg)
     global msg
     return msg
@@ -175,14 +183,15 @@ while counter <= 20: #debug counter
 	print 'Data', arduinoData #Debug purpose
 	#arduinoData = '42,64' #Single data Simulation0
 	#if counter == 0: #Continuous data Simulation
-	#	arduinoData = '42,63'
+	#	arduinoData = '42,63,1000'
 	#elif counter == 1:
-	#	arduinoData = '38,61'
+	#	arduinoData = '38,61,2000'
 	#elif counter == 2:
-	#	arduinoData = '12,58'
+	#	arduinoData = '12,58,3000'
 	arduinoData = arduinoData.split(',')
 	dataTemp.append(arduinoData[0])
 	dataHeart.append(arduinoData[1])
+	dataPoll.append(arduinoData[2])
 	arduinoData = []
 	counter += 1
 
@@ -197,12 +206,15 @@ for i in range(0,0): #STAYS AT 0,0 FOR SIMULATION PURPOSE
 for i in range(1,len(dataTemp)): 
 	if(dataTemp[i] < ((0.0891*(math.log(i))+36.621)+1.5) or dataTemp[i] < ((0.0891*(math.log(i))+36.621)-1.5)):
 		index.append(i)
+for i in range(0,len(dataPoll[i]):
+	dataPoll[i] = float(dataPoll[i])
 
 dataTemp = np.delete(dataTemp, index)
 print dataTemp
 
 averageT = np.mean(dataTemp)
 averageP = np.mean(dataHeart)
+averagePO = np.mean(dataPoll)
 
 if averageT < 38 and averageT > 36:
 	conditionT = 'normal'
@@ -213,6 +225,7 @@ elif averageT > 38 and averageT < 39:
 elif averageT > 39:
 	conditionT = 'high fever'
 	conditionTR = 2
+
 if averageP > 55 and averageP < 90:
 	conditionP = 'normal'
 	conditionPR = 0
@@ -226,19 +239,33 @@ elif averageP < 55:
 	conditionP = 'low pulse'
 	conditionPR =  3
 
+if averagePO > sThreshPO and averagePO < mThreshPO:  
+	conditionPO = 'normal'
+	conditionPOR = 0
+elif averagePO > mThreshPO and averagePO < dThreshPO: #UNDEFINED VARIABLES
+	conditionPO = 'pollutants detected'
+	conditionPOR = 1
+elif averagePO > dThreshPO and averagePO < ddThreshPO: #UNDEFINED VARIABLES
+	conditionPO = 'dangerous amounts of pollutants detected'
+	conditionPOR = 2
+
 #Cross Validation between Heart Rate and Temperature Needed
 
 print 'Average Temperature:',averageT   
 print 'Average Pulse:',averageP
+print 'Average Pollution Index: ', averagePO
 print 'Temperature Condition:',conditionT 
 print 'Pulse Condition:',conditionP
+print 'Pollution Index Condition', conditionPO
 print 'Temperature Remarks: ',dataBank[conditionTR][conditionTA]
 print 'Pulse Remarks: ',dataBank[conditionPR][conditionPA]
+print 'Pollution Monitoring Remarks: ', dataBank[conditionPOR][conditionPOA]  
 
 
 msgT = dataBank[conditionTR][conditionTA]
 msgP = dataBank[conditionPR][conditionPA]
+msgPO = dataBank[conditionPOR][conditionPOA]
 
-tempMsg(ctime, averageP, conditionP, msgP, averageT, conditionT, msgT)
+tempMsg(ctime, averageP, conditionP, msgP, averageT, conditionT, msgT, averagePO, conditionPO, msgPO)
 compose_email(['jameswang1279@gmail.com', '', ''], 'Healthcare Monitoring System Data Report',[[msg, 0]], 'signal.png')
 
